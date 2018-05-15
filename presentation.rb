@@ -2,12 +2,14 @@ require 'pry'
 require 'pp'
 require './lib/spacex_api'
 require './lib/launches'
+require './lib/rockets'
 
 class Presentation
 
   def initialize
     @spacex = SpacexApi.new
-    @launches = Launches.new(@spacex.launches, @spacex.rockets)
+    @rockets = Rockets.new(@spacex.rockets)
+    @launches = Launches.new(@spacex.launches, @rockets)
   end
 
   def start_presentation
@@ -19,9 +21,7 @@ class Presentation
 
   # can be used separately
   def count_by_months
-    launches.count_by_months.each do |key, value|
-      puts "#{key} #{value}"
-    end
+    print_each_row(launches.count_by_months)
     nil
   end
 
@@ -31,23 +31,31 @@ class Presentation
   end
 
   def rocket_cost_per_launch
-    launches.rocket_cost_per_launch.each do |rocket|
+    rockets.rocket_cost_per_launch.each do |rocket|
       puts "#{rocket.name} #{rocket.cost_per_launch}"
     end
     nil
   end
 
   def annual_costs
-    launches.annual_costs.each do |year, expenditure|
-      puts %(#{year} #{expenditure} )
-    end
+    print_each_row(launches.annual_costs)
     nil
   end
 
   private
 
+  def print_each_row(data)
+    data.each do |key, val|
+      puts %(#{key} #{val} )
+    end
+  end
+
   def launches
     @launches
+  end
+
+  def rockets
+    @rockets
   end
 end
 

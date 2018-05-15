@@ -1,7 +1,7 @@
 class Launches
-  def initialize(all_launches, all_rockets)
+  def initialize(all_launches, rockets)
     @all_launches_json = all_launches
-    @all_rockets_json = all_rockets
+    @rockets = rockets
   end
 
   def count_by_months
@@ -10,7 +10,7 @@ class Launches
 
   def total_payload_in_kilograms
     all_payloads = []
-    all_launches_json.each do |l|
+    all_launches_json.map do |l|
       all_payloads << l.rocket.second_stage.payloads.first.payload_mass_kg\
       unless l.rocket.second_stage.payloads.first.payload_mass_kg.nil?
     end
@@ -18,13 +18,9 @@ class Launches
     all_payloads.sum
   end
 
-  def rocket_cost_per_launch
-    all_rockets_json
-  end
-
   def annual_costs
     first_year, last_year, rockets_per_year = get_launches_dates_and_counts(all_launches_json)
-    get_launch_costs_per_year(rockets_per_year, rockets_price_list, first_year, last_year)
+    get_launch_costs_per_year(rockets_per_year, rockets_json.rockets_price_list, first_year, last_year)
   end
 
   private
@@ -34,7 +30,7 @@ class Launches
     first_year, last_year = nil
     rockets_per_year = {}
 
-    all_launches_json.each do |launch|
+    all_launches_json.map do |launch|
       year        = launch.launch_date_utc[0..3].to_s
       first_year  ||= year
       last_year   = year
@@ -58,7 +54,7 @@ class Launches
   def get_launch_costs_per_year(launches_count_per_year, rockets_price_list, first_year, last_year)
     costs = {}
 
-    launches_count_per_year.each do |year, rockets|
+    launches_count_per_year.map do |year, rockets|
       costs[year.to_s] = 0 if costs[year.to_s].nil?
       rockets.each do |rocket_id, count|
         costs[year.to_s] += rockets_price_list[rocket_id.to_s] * count
@@ -75,21 +71,13 @@ class Launches
     costs.sort
   end
 
-  def rockets_price_list
-    price_list = {}
-    all_rockets_json.each do |rocket|
-      price_list[(rocket.id).to_s] = rocket.cost_per_launch
-    end
-    price_list
-  end
-
   def launches_per_month
     launches_per_month = count_by_month(Hash.new(0))
     launches_per_month.sort
   end
 
   def count_by_month(hash_counter)
-    all_launches_json.each do |launch|
+    all_launches_json.map do |launch|
       month = launch.launch_date_utc[5..6].to_s
       hash_counter[:"#{month}"] += 1
     end
@@ -100,7 +88,8 @@ class Launches
     JSON.parse(@all_launches_json.body, object_class: OpenStruct)
   end
 
-  def all_rockets_json
-    JSON.parse(@all_rockets_json.body, object_class: OpenStruct)
+  def rockets_json
+    @rockets
   end
+
 end
