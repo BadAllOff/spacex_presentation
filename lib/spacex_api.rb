@@ -6,10 +6,28 @@ class SpacexApi
   base_uri 'api.spacexdata.com/v2/'
 
   def rockets
-    self.class.get('/rockets')
+    get('/rockets')
   end
 
   def launches
-    self.class.get('/launches')
+    get('/launches')
+  end
+
+  private
+
+  def get(path)
+    parse(self.class.get(path))
+    rescue HTTParty::Error
+      {}
+    rescue StandardError
+      {}
+  end
+
+  def parse(response)
+    if response.code == 200
+      response
+    else
+      {}
+    end
   end
 end
