@@ -2,10 +2,10 @@ require 'pry'
 require 'pp'
 require_relative 'lib/spacex_api'
 require_relative 'lib/launch'
-require_relative 'presenters/basePresenter'
+require_relative 'presenters/base_presenter'
 require_relative 'presenters/launches_by_month'
 require_relative 'presenters/total_payload'
-require_relative 'presenters/costsByRocket'
+require_relative 'presenters/costs_by_rocket'
 
 
 costs = SpacexApi.new.rockets.map { |rocket| [rocket['name'], rocket['cost_per_launch']] }
