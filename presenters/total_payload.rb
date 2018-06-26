@@ -1,25 +1,20 @@
 module Presenters
   class TotalPayload
 
-    def initialize(launches)
+    def initialize(launches, payload)
       @launches = launches
-      @month_counter = Hash.new
+      @payload = payload
     end
 
     def print
       launches.map do |launch|
-        month = launch.date.month
-        if month_counter[month]
-          month_counter[month] += 1
-        else
-          month_counter[month] = 1
-        end
+        @payload += launch.payload_weight if launch.success
       end
-      pp month_counter.sort
+      puts @payload
     end
 
     private
 
-    attr_reader :launches, :month_counter
+    attr_reader :launches
   end
 end

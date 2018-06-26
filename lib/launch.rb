@@ -20,6 +20,6 @@ class Launch
   end
 
   def payload_weight
-    success ? rocket.payload_weight : 0
+    success ? rocket.payload : 0
   end
 end

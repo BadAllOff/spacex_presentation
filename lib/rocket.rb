@@ -4,17 +4,17 @@ class Rocket
   def self.parse(json)
     new(
         rocket_name: json['rocket_name'],
-        payload: payload_weight(json['second_stage']['payloads'])
+        payload: payloads(json['second_stage']['payloads'] ||= 0)
     )
   end
 
   def initialize(rocket_name:, payload:)
-    @payload      = payload
-    @rocket_name   = rocket_name
+    @payload     = payload
+    @rocket_name = rocket_name
   end
 
-  def self.payload_weight(payloads)
-    # binding.pry
-    payloads.inject(0){ |sum,x| sum + x['payload_mass_kg'] if x['payload_mass_kg'] }
+  def self.payloads(payload_weight)
+    payloads = payload_weight.inject(0){ |sum,x| sum + x['payload_mass_kg'] if x['payload_mass_kg'] }
+    payloads ? payloads : 0
   end
 end
