@@ -2,14 +2,26 @@ module Presenters
   class CostsByYear < BasePresenter
     def initialize(launches)
       @launches = launches
+      @costs_by_year = Hash.new
     end
 
     def print
-      binding.pry
-      hsh = launches.group_by { |h| Date.parse h[:date] }.map do |k,v|
-        {:created => k.to_s,:cost => v.map {|h1| h1[:cost]}.inject(:+)}
+      launches.map do |launch|
+        costs_by_year[launch.date.year] ||= 0
+        costs_by_year[launch.date.year] += launch.cost if launch.success
       end
-      hsh
+      first_year = costs_by_year.sort.first[0]
+      last_year = costs_by_year.sort.last[0]
+
+      (first_year..last_year).map do |year|
+        costs_by_year[year] ||= 0
+      end
+
+      super(costs_by_year.sort)
     end
-  end
+
+    private
+
+    attr_reader :launches, :costs_by_year
+    end
 end

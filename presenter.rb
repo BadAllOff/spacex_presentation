@@ -8,7 +8,6 @@ require_relative 'presenters/total_payload'
 require_relative 'presenters/costs_by_rocket'
 require_relative 'presenters/costs_by_year'
 
-
 costs = SpacexApi.new.rockets.map { |rocket| [rocket['name'], rocket['cost_per_launch']] }
 launches = SpacexApi.new.launches.map { |launch| Launch.parse(launch, costs.to_h) }
 
