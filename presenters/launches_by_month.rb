@@ -1,5 +1,6 @@
 module Presenters
-  class LaunchesByMonth
+  class LaunchesByMonth < BasePresenter
+
 
     def initialize(launches)
       @launches = launches
@@ -15,9 +16,13 @@ module Presenters
           month_counter[month] = 1
         end
       end
-      pp month_counter.sort
+
+      (1..12).each do |month|
+        month_counter[month] = 0 if !month_counter.key?(month)
+      end
+
+      super(month_counter.sort)
     end
-    # TODO 11's MONTH
 
     private
 
