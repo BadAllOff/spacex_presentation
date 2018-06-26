@@ -25,7 +25,7 @@ class SpacexApi
 
   def parse(response)
     if response.code == 200
-      response
+      JSON.parse(response.body)
     else
       {}
     end

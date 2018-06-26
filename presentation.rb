@@ -21,7 +21,9 @@ class Presentation
 
   # can be used separately
   def count_by_months
-    print_each_row(launches.count_by_months)
+    launches.count_by_months.each do |key, val|
+      puts %(#{key} #{val} )
+    end
     nil
   end
 
